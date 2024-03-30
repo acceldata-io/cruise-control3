@@ -2,6 +2,9 @@
 # Copyright 2017 LinkedIn Corp. Licensed under the BSD 2-Clause License (the "License").
 # See License in the project root for license information.
 
+#set JAVA_HOME
+export JAVA_HOME=/usr/lib/jvm/java-11
+
 if [ $# -lt 1 ];
 then
   echo "USAGE: $0 [-daemon] [-name servicename] [-loggc] [-jars jar_path] config_path [port]"
