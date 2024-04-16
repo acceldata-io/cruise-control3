@@ -38,13 +38,13 @@ CC_CMD="$CC_HOME/bin/kafka-cruise-control-start.sh  $CC_HOME/conf/cruisecontrol.
 
 #PID & LOG DIRs
 [ -z $PID_DIR ] && PID_DIR="/var/run/kafka"
-[ -z $LOG_DIR ] && LOG_DIR="/var/log/kafka"
+[ -z $LOG_DIR ] && LOG_DIR="/var/log/kafka/cruise-control"
 
 #Name of PID file
 PID_FILE="$PID_DIR/$APP_NAME.pid"
 
 #Name of LOG ERR file
-ERR_FILE="$LOG_DIR/cruise-control/$APP_NAME.err"
+ERR_FILE="$LOG_DIR/$APP_NAME.err"
 
 [ -z $MAX_WAIT_TIME ] && MAX_WAIT_TIME=120
 
