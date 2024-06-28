@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import scala.Option;
 import scala.jdk.javaapi.CollectionConverters;
 import org.apache.zookeeper.client.ZKClientConfig;
 
@@ -57,7 +58,7 @@ public class KafkaTopicConfigProvider extends JsonFileTopicConfigProvider {
       _zkSecurityEnabled,
       _zkClientConfig);
     try {
-      AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
+      AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient, Option.apply(null));
       return adminZkClient.fetchEntityConfig(ConfigType.Topic(), topic);
     } finally {
       KafkaCruiseControlUtils.closeKafkaZkClientWithTimeout(kafkaZkClient);
@@ -73,8 +74,7 @@ public class KafkaTopicConfigProvider extends JsonFileTopicConfigProvider {
                                                                               _zkClientConfig);
     Map<String, Properties> topicConfigs = new HashMap<>();
     try {
-      AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
-
+      AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient, Option.apply(null));
       for (String topic : topics) {
         try {
           Properties topicConfig = adminZkClient.fetchEntityConfig(ConfigType.Topic(), topic);
@@ -98,7 +98,7 @@ public class KafkaTopicConfigProvider extends JsonFileTopicConfigProvider {
                                                                               _zkSecurityEnabled,
                                                                               _zkClientConfig);
     try {
-      AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
+      AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient, Option.apply(null));
       return CollectionConverters.asJava(adminZkClient.getAllTopicConfigs());
     } finally {
       KafkaCruiseControlUtils.closeKafkaZkClientWithTimeout(kafkaZkClient);
