@@ -15,7 +15,7 @@ else
   CYGWIN=0
 fi
 
-base_dir=/usr/odp/current/cruise-control
+base_dir=/usr/odp/current/cruise-control3
 
 if [ -z "$SCALA_VERSION" ]; then
   SCALA_VERSION=2.13.6
