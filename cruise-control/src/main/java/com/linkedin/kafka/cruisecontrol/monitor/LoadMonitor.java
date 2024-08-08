@@ -82,7 +82,7 @@ public class LoadMonitor {
   // Metadata TTL is set based on experience -- i.e. a short TTL with large metadata may cause excessive load on brokers.
   private static final long METADATA_TTL = TimeUnit.SECONDS.toMillis(10);
   private static final long METADATA_REFRESH_BACKOFF = TimeUnit.SECONDS.toMillis(5);
-  private static final long METADATA_REFRESH_BACKOFF_MAX = TimeUnit.SECONDS.toMillis(5);
+  private static final long METADATA_REFRESH_BACKOFF_MAX = TimeUnit.SECONDS.toMillis(50);
   public static final String KAFKA_ADMIN_CLIENT_OBJECT_CONFIG = "kafka.admin.client.object";
   // The maximum time allowed to make a state update. If the state value cannot be updated in time it will be invalidated.
   // TODO: Make this configurable.
