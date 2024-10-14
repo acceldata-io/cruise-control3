@@ -108,7 +108,7 @@ public class ExcludedBrokersForLeadershipTest {
     Set<Integer> noExclusion = Collections.emptySet();
     Set<Integer> excludeB1 = Collections.singleton(1);
     Set<Integer> excludeB0 = Collections.singleton(0);
-    Set<Integer> excludeB0B1 = Set.of(0, 1, 2);
+    Set<Integer> excludeB0B1 = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(0, 1, 2)));
     Set<Integer> excludeAllBrokers = Collections.unmodifiableSet(RACK_BY_BROKER.keySet());
     Set<Integer> excludeAllBrokersForBrokerSetTests = Collections.unmodifiableSet(RACK_BY_BROKER4.keySet());
     Set<Integer> excludeB1B2 = new HashSet<>(RACK_BY_BROKER.keySet());
