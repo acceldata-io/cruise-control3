@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -189,7 +190,7 @@ public final class ParameterUtils {
       return null;
     }
     // Skip the first character '/'
-    Path path = Path.of(pathInfo).getFileName();
+    Path path = Paths.get(pathInfo).getFileName();
     for (CruiseControlEndPoint endPoint : supportedEndpoints) {
       if (endPoint.toString().equalsIgnoreCase(String.valueOf(path))) {
         return endPoint;
@@ -387,7 +388,7 @@ public final class ParameterUtils {
 
   static boolean capacityOnly(CruiseControlRequestContext requestContext) {
     Set<String> excludeParameters =
-        Set.of(TIME_PARAM, END_MS_PARAM, START_MS_PARAM, ALLOW_CAPACITY_ESTIMATION_PARAM, POPULATE_DISK_INFO_PARAM);
+        Collections.unmodifiableSet(new HashSet<>(Arrays.asList(TIME_PARAM, END_MS_PARAM, START_MS_PARAM, ALLOW_CAPACITY_ESTIMATION_PARAM, POPULATE_DISK_INFO_PARAM)));
     return getBooleanExcludeGiven(requestContext, CAPACITY_ONLY_PARAM, excludeParameters);
   }
 
@@ -670,7 +671,9 @@ public final class ParameterUtils {
     ensureDisjoint(enableSelfHealingFor, disableSelfHealingFor,
                    "The same anomaly cannot be specified in both disable and enable parameters");
 
-    Map<Boolean, Set<AnomalyType>> selfHealingFor = Map.of(true, enableSelfHealingFor, false, disableSelfHealingFor);
+    Map<Boolean, Set<AnomalyType>> selfHealingFor = new HashMap<>();
+    selfHealingFor.put(true, enableSelfHealingFor);
+    selfHealingFor.put(false, disableSelfHealingFor);
     return selfHealingFor;
   }
 
@@ -689,8 +692,9 @@ public final class ParameterUtils {
     ensureDisjoint(enableConcurrencyAdjusterFor, disableConcurrencyAdjusterFor,
                    "The same concurrency type cannot be specified in both disable and enable parameters");
 
-    Map<Boolean, Set<ConcurrencyType>> concurrencyAdjusterFor = Map.of(true, enableConcurrencyAdjusterFor,
-                                                                       false, disableConcurrencyAdjusterFor);
+    Map<Boolean, Set<ConcurrencyType>> concurrencyAdjusterFor = new HashMap<>();
+    concurrencyAdjusterFor.put(true, enableConcurrencyAdjusterFor);
+    concurrencyAdjusterFor.put(false, disableConcurrencyAdjusterFor);
     return concurrencyAdjusterFor;
   }
 
@@ -1060,7 +1064,9 @@ public final class ParameterUtils {
                                                    REVIEW, APPROVE_PARAM, DISCARD_PARAM));
     }
 
-    Map<ReviewStatus, Set<Integer>> reviewRequest = Map.of(APPROVED, approve, DISCARDED, discard);
+    Map<ReviewStatus, Set<Integer>> reviewRequest = new HashMap<>();
+    reviewRequest.put(APPROVED, approve);
+    reviewRequest.put(DISCARDED, discard);
     return reviewRequest;
   }
 
