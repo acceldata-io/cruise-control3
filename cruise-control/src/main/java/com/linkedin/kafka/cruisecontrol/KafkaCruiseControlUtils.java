@@ -65,6 +65,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -946,7 +948,7 @@ public final class KafkaCruiseControlUtils {
   public enum CompletionType {
     NO_ACTION, COMPLETED, COMPLETED_WITH_ERROR;
 
-    private static final List<CompletionType> CACHED_VALUES = List.of(values());
+    private static final List<CompletionType> CACHED_VALUES = new ArrayList<>(Arrays.asList(values()));
 
     /**
      * Use this instead of values() because values() creates a new array each time.

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -76,7 +77,9 @@ public final class ResponseUtils {
   }
 
   static String getBaseJsonString(String message) {
-    Map<String, Object> jsonResponse = Map.of(VERSION, JSON_VERSION, MESSAGE, message);
+    Map<String, Object> jsonResponse = new HashMap<>(2);
+    jsonResponse.put(VERSION, JSON_VERSION);
+    jsonResponse.put(MESSAGE, message);
     return new Gson().toJson(jsonResponse);
   }
 
@@ -204,7 +207,11 @@ public final class ResponseUtils {
      * @return The map describing the error.
      */
     public Map<String, Object> getJsonStructure() {
-      return Map.of(VERSION, JSON_VERSION, STACK_TRACE, stackTrace(_exception), ERROR_MESSAGE, _errorMessage);
+      Map<String, Object> exceptionMap = new HashMap<>();
+      exceptionMap.put(VERSION, JSON_VERSION);
+      exceptionMap.put(STACK_TRACE, stackTrace(_exception));
+      exceptionMap.put(ERROR_MESSAGE, _errorMessage);
+      return exceptionMap;
     }
   }
 }

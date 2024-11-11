@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -79,7 +79,7 @@ public class BrokerSetFileResolver implements BrokerSetResolver {
   }
 
   private Map<String, Set<Integer>> loadBrokerSetData() throws IOException {
-    try (Reader reader = Files.newBufferedReader(Path.of(_configFile), StandardCharsets.UTF_8)) {
+    try (Reader reader = Files.newBufferedReader(Paths.get(_configFile), StandardCharsets.UTF_8)) {
       Gson gson = new Gson();
       final BrokerSets brokerSets = gson.fromJson(reader, BrokerSets.class);
       final Set<BrokerSet> brokerSetSet = brokerSets.brokerSets;

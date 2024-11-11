@@ -648,7 +648,9 @@ public class ClusterModel implements Serializable {
    * @return Alive racks in the cluster.
    */
   public Set<Rack> aliveRacks() {
-    return _racksById.values().stream().filter(Rack::isRackAlive).collect(Collectors.toUnmodifiableSet());
+    return Collections.unmodifiableSet(
+            _racksById.values().stream().filter(Rack::isRackAlive).collect(Collectors.toSet())
+    );
   }
 
   /**
@@ -656,9 +658,11 @@ public class ClusterModel implements Serializable {
    * @return The number of alive racks in the cluster that are allowed replica moves.
    */
   public Set<Rack> aliveRacksAllowedReplicaMoves(OptimizationOptions optimizationOptions) {
-    return _racksById.values().stream()
-                     .filter(r -> r.isAliveAndAllowedReplicaMoves(optimizationOptions))
-                     .collect(Collectors.toUnmodifiableSet());
+    return Collections.unmodifiableSet(
+            _racksById.values().stream()
+                    .filter(r -> r.isAliveAndAllowedReplicaMoves(optimizationOptions))
+                    .collect(Collectors.toSet())
+    );
   }
 
   /**
