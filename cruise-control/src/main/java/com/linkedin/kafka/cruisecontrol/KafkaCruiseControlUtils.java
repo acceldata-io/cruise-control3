@@ -544,32 +544,49 @@ public final class KafkaCruiseControlUtils {
     KafkaZkClient kafkaZkClient = null;
     try {
       String zkClientName = String.format("%s-%s", metricGroup, metricType);
-      Method kafka31PlusMet = KafkaZkClient.class.getMethod("apply", String.class, boolean.class, int.class, int.class, int.class,
-                                                            org.apache.kafka.common.utils.Time.class, String.class, ZKClientConfig.class,
-                                                            String.class, String.class, boolean.class);
-      kafkaZkClient = (KafkaZkClient) kafka31PlusMet.invoke(null, connectString, zkSecurityEnabled, ZK_SESSION_TIMEOUT, ZK_CONNECTION_TIMEOUT,
-                                                            Integer.MAX_VALUE, new SystemTime(), zkClientName, zkClientConfig, metricGroup,
-                                                            metricType, false);
-    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-      LOG.debug("Unable to find apply method in KafkaZkClient for Kafka 3.1+.", e);
-    }
-    if (kafkaZkClient == null) {
+      // First, try to get the Kafka 3.7.1+ apply method (with enableEntityConfigControllerCheck)
       try {
-        Option<String> zkClientName = Option.apply(String.format("%s-%s", metricGroup, metricType));
-        Option<ZKClientConfig> zkConfig = Option.apply(zkClientConfig);
-        Method kafka31MinusMet = KafkaZkClient.class.getMethod("apply", String.class, boolean.class, int.class, int.class, int.class,
-                                                               org.apache.kafka.common.utils.Time.class, String.class, String.class, Option.class,
-                                                               Option.class);
-        kafkaZkClient = (KafkaZkClient) kafka31MinusMet.invoke(null, connectString, zkSecurityEnabled, ZK_SESSION_TIMEOUT, ZK_CONNECTION_TIMEOUT,
-                                                               Integer.MAX_VALUE, new SystemTime(), metricGroup, metricType, zkClientName, zkConfig);
+        Method kafka371PlusMet = KafkaZkClient.class.getMethod("apply", String.class, boolean.class, int.class, int.class, int.class,
+                org.apache.kafka.common.utils.Time.class, String.class, ZKClientConfig.class, String.class, String.class, boolean.class,
+                boolean.class);
+        kafkaZkClient = (KafkaZkClient) kafka371PlusMet.invoke(null, connectString, zkSecurityEnabled, ZK_SESSION_TIMEOUT, ZK_CONNECTION_TIMEOUT,
+                Integer.MAX_VALUE, new SystemTime(), zkClientName, zkClientConfig, metricGroup, metricType, false, true);
       } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-        LOG.debug("Unable to find apply method in KafkaZkClient for Kafka 3.1-.", e);
+        LOG.debug("Unable to find apply method in KafkaZkClient for Kafka 3.7.1+.", e);
       }
-    }
-    if (kafkaZkClient != null) {
-      return kafkaZkClient;
-    } else {
-      throw new NoSuchElementException("Unable to find viable apply function version for the KafkaZkClient class ");
+
+      if (kafkaZkClient == null) {
+        try {
+          Method kafka31PlusMet = KafkaZkClient.class.getMethod("apply", String.class, boolean.class, int.class, int.class, int.class,
+                  org.apache.kafka.common.utils.Time.class, String.class, ZKClientConfig.class, String.class, String.class, boolean.class);
+          kafkaZkClient = (KafkaZkClient) kafka31PlusMet.invoke(null, connectString, zkSecurityEnabled, ZK_SESSION_TIMEOUT, ZK_CONNECTION_TIMEOUT,
+                  Integer.MAX_VALUE, new SystemTime(), zkClientName, zkClientConfig, metricGroup, metricType, false);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+          LOG.debug("Unable to find apply method in KafkaZkClient for Kafka 3.1+.", e);
+        }
+      }
+
+      // If still null, try the even older method for Kafka 3.1-
+      if (kafkaZkClient == null) {
+        try {
+          Option<String> zkClientNameOpt = Option.apply(zkClientName);
+          Option<ZKClientConfig> zkConfigOpt = Option.apply(zkClientConfig);
+          Method kafka31MinusMet = KafkaZkClient.class.getMethod("apply", String.class, boolean.class, int.class, int.class, int.class,
+                  org.apache.kafka.common.utils.Time.class, String.class, String.class, Option.class, Option.class);
+          kafkaZkClient = (KafkaZkClient) kafka31MinusMet.invoke(null, connectString, zkSecurityEnabled, ZK_SESSION_TIMEOUT, ZK_CONNECTION_TIMEOUT,
+                  Integer.MAX_VALUE, new SystemTime(), metricGroup, metricType, zkClientNameOpt, zkConfigOpt);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+          LOG.debug("Unable to find apply method in KafkaZkClient for Kafka 3.1-.", e);
+        }
+      }
+
+      if (kafkaZkClient != null) {
+        return kafkaZkClient;
+      } else {
+        throw new NoSuchElementException("Unable to find a viable apply function version for the KafkaZkClient class.");
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to create KafkaZkClient", e);
     }
   }
 
