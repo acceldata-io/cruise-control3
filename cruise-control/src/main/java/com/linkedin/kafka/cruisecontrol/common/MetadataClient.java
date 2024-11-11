@@ -104,12 +104,12 @@ public class MetadataClient {
   }
 
   private void doRefreshMetadata(long timeoutMs) {
-    int updateVersion = _metadata.requestUpdate();
+    int updateVersion = _metadata.requestUpdate(true); // Pass true to reset the equivalent response backoff
     long remaining = timeoutMs;
     Cluster beforeUpdate = cluster();
     boolean isMetadataUpdated = _metadata.updateVersion() > updateVersion;
     while (!isMetadataUpdated && remaining > 0) {
-      _metadata.requestUpdate();
+      _metadata.requestUpdate(true); // Pass true to reset the equivalent response backoff
       long start = _time.milliseconds();
       _networkClient.poll(remaining, start);
       remaining -= (_time.milliseconds() - start);
