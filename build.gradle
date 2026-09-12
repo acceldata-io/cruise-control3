@@ -159,6 +159,10 @@ subprojects {
     if (!project.hasProperty("maxParallelForks")) {
       maxParallelForks = Runtime.runtime.availableProcessors()
     }
+    // Recycle the JVM periodically with sufficient heap. Running all embedded Kafka/KDC tests
+    // in a single JVM accumulates resources, causing OOMs and GC timeouts.
+    forkEvery = 25
+    maxHeapSize = '2g'
     finalizedBy jacocoTestReport
   }
 
@@ -318,12 +322,6 @@ project(':cruise-control') {
     api 'com.google.guava:guava:32.1.3-jre'
     api 'org.json:json:20231013'
     api 'org.xerial.snappy:snappy-java:1.1.10.5'
-
-    constraints {
-      implementation("commons-beanutils:commons-beanutils:1.11.0") {
-        because("version 1.9.4 pulled from kafa 3.9.1 has CVE-2025-48734 in it, which is fixed in 1.11.0")
-      }
-    }
 
     testImplementation project(path: ':cruise-control-metrics-reporter', configuration: 'testOutput')
     testImplementation project(path: ':cruise-control-core', configuration: 'testOutput')
