@@ -325,23 +325,11 @@ project(':cruise-control') {
       implementation("commons-beanutils:commons-beanutils:1.11.0") {
         because("version 1.9.4 pulled from kafa 3.9.1 has CVE-2025-48734 in it, which is fixed in 1.11.0")
       }
-      implementation("io.netty:netty-codec:${nettyVersion}") {
-        because("align netty-codec pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
-      }
       implementation("io.netty:netty-codec-http:${nettyVersion}") {
-        because("align netty-codec-http pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
+        because("vertx's own BOM only pins netty-codec-http to 4.1.135.Final; align with the ${nettyVersion} family to fix CVEs requiring 4.1.136.Final+")
       }
       implementation("io.netty:netty-codec-http2:${nettyVersion}") {
-        because("align netty-codec-http2 pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
-      }
-      implementation("io.netty:netty-codec-dns:${nettyVersion}") {
-        because("align netty-codec-dns pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
-      }
-      implementation("io.netty:netty-resolver-dns:${nettyVersion}") {
-        because("align netty-resolver-dns pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
-      }
-      implementation("com.fasterxml.jackson.core:jackson-core:2.21.4") {
-        because("version 2.21.2 pulled transitively via vertx/kafka-clients has CVE fixed in 2.21.4")
+        because("vertx's own BOM only pins netty-codec-http2 to 4.1.135.Final; align with the ${nettyVersion} family to fix CVEs requiring 4.1.136.Final+")
       }
     }
 
