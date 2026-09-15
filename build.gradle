@@ -325,6 +325,21 @@ project(':cruise-control') {
       implementation("commons-beanutils:commons-beanutils:1.11.0") {
         because("version 1.9.4 pulled from kafa 3.9.1 has CVE-2025-48734 in it, which is fixed in 1.11.0")
       }
+      implementation("io.netty:netty-codec:${nettyVersion}") {
+        because("align netty-codec pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
+      }
+      implementation("io.netty:netty-codec-http:${nettyVersion}") {
+        because("align netty-codec-http pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
+      }
+      implementation("io.netty:netty-codec-http2:${nettyVersion}") {
+        because("align netty-codec-http2 pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
+      }
+      implementation("io.netty:netty-codec-dns:${nettyVersion}") {
+        because("align netty-codec-dns pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
+      }
+      implementation("io.netty:netty-resolver-dns:${nettyVersion}") {
+        because("align netty-resolver-dns pulled transitively via vertx with the ${nettyVersion} family to fix CVEs")
+      }
     }
 
     testImplementation project(path: ':cruise-control-metrics-reporter', configuration: 'testOutput')
